@@ -24,12 +24,12 @@ Je n’ai pas eu de soucis particuliers avec les headers des requêtes mais j’
 J’avais au départ séparé la création et le login/ajout de chaussure dans 2 fichiers différents mais j’avais beaucoup trop de requêtes qui se répétait (notamment connexion au compte et à la page login), j’ai donc mis tout dans un seul fichier et sachant que solebox, lorsque l’on crée un compte, il nous login directement, je n’avais pas besoin de passer par cette étape et il fallait simplement créer un compte, chercher le produit et l’ajouter.
 
 #### Ordre d’exécution des requêtes au début du projet: 
--GET : Connexion au site solebox (Supprimé car non nécessaire)
--GET : Connexion à la page login (Non nécessaire quand on met tout dans 1 seul fichier)
--GET : Demande de la page d’inscription (Récupération du csrf token)
--POST : Envoi d’une demande d’inscription avec les informations de l’utilisateur (Vérification du résultat via la réponse du serveur)
--GET : Recherche de l’article (Récupération du PID de l’article)
--POST : Ajout de l’article au panier
+- Requête GET : Connexion au site solebox (Supprimé car non nécessaire)
+- Requête GET : Connexion à la page login (Non nécessaire quand on met tout dans 1 seul fichier)
+- Requête GET : Demande de la page d’inscription (Récupération du csrf token)
+- Requête POST : Envoi d’une demande d’inscription avec les informations de l’utilisateur (Vérification du résultat via la réponse du serveur)
+- Requête GET : Recherche de l’article (Récupération du PID de l’article)
+- Requête POST : Ajout de l’article au panier
 
 On garde les 4 dernières requêtes.
 
