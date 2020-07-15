@@ -2,27 +2,28 @@
 from requet import Requet, Log
 import re
 import time
+import sys
 
-#Information relative au compte que l'on veut créer	 
-titre = "mr" #
-prenom = "tifouk"
-nom = "hoos"
-mail = "bg92@gmail.com"
-mdp= "password1234" 
+#Informations relatives au compte que l'on veut créer	 
+titre = "mr" 
+prenom = "John"
+nom = "Doe"
+mail = "soldout5@ageokfc.com"
+mdp= "motdepasse92" 
 tel = "" 
 naissance = "16.11.2000"
 
 
 
 
-print(r'''   
--Test technique sold out
--Developed by Chahid Ouraghene
--Ce script python permet de créer un compte, se login puis ajouter un article dans le panier sur le site solebox
+ 
+print("\n -Test technique sold out\n")
+print(" -Developed by Chahid Ouraghene\n")
+print(" -Ce script python permet de créer un compte, se login puis ajouter un article dans le panier sur le site solebox\n")
 	  
 
  
- ''')
+ 
 
 input("Appuyez sur une touche pour commencer")
 
@@ -37,19 +38,6 @@ reqAcc.debug = False
    
 
 print("Connexion au site réussie !")
-
-reqAcc.requet('/en_FR/login',
-	headers={
-		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-		'Accept-Language': 'en-US,en;q=0.5',
-		'Connection': 'close',
-		'Referer': 'https://www.solebox.com/en_FR',
-		'Upgrade-Insecure-Requests': '1'
-	}
-
-)
-
-
 
 
 print("Creation du compte...")
@@ -67,13 +55,13 @@ response_acc = reqAcc.requet('/en_FR/registration?rurl=1',
 
 
 
-csrf = re.search(r'(name=\"csrf_token\" value=\")(.+)(=\"/>)',response_acc).group(2)
+csrf = re.search(r'(name=\"csrf_token\" value=\")(.+)(=\"/>)',response_acc).group(2) #Recherche du token csrf
 
-
+#Initialisation d'une variable contenant les informations de l'utilisateur
 requetbody_acc = "dwfrm_profile_register_title=" + titre + "&dwfrm_profile_register_firstName=" + prenom + "&dwfrm_profile_register_lastName=" + nom + "&dwfrm_profile_register_email=" + mail + "&dwfrm_profile_register_emailConfirm=" + mail + "&dwfrm_profile_register_password=" + mdp + "&dwfrm_profile_register_passwordConfirm=" + mdp+ "&dwfrm_profile_register_phone=" + tel+ "&dwfrm_profile_register_birthday=" + naissance + "&dwfrm_profile_register_acceptPolicy=true&csrf_token=" +csrf+"%3D"
 
 
-
+#Envoi de la demande d'inscription au serveur avec les info user
 post_register= reqAcc.requet('/on/demandware.store/Sites-solebox-Site/en_FR/Account-SubmitRegistration?rurl=1&format=ajax',
     method="post",
 	headers={
@@ -89,19 +77,23 @@ post_register= reqAcc.requet('/on/demandware.store/Sites-solebox-Site/en_FR/Acco
     body=requetbody_acc
 )
 
-if("error" in post_register):
-	print("La creation du compte a echoué. Vérifiez les informations")
+#Vérification de la demande d'inscription
+if("errorMessage" in post_register):
+        
+	print("La création de compte a échouée. Le programme va se fermer")
+       
 else:
-	print("Compte créé ! Verifiez vos e-mails");
+	print("Compte créé !");
+
 
 print("Login au compte...")
 
 time.sleep(5)
 
 
-print('\033[94m' + "\n\nRecherche de l'article...")
+print("Recherche de l'article...")
 
-
+#Recherche de l'article et récupération du PID
 response = reqAcc.requet('/en_FR/p/carhartt_wip-s%2Fs_pocket_tee_-black-01713398.html ',
 	headers={
 		'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -117,7 +109,7 @@ response = reqAcc.requet('/en_FR/p/carhartt_wip-s%2Fs_pocket_tee_-black-01713398
 
 print("Ajout de l'article au panier..")
 
-
+#Ajout au panier
 atc_post_response = reqAcc.requet('/en_FR/add-product?format=ajax',
     method="post",
 	headers={
@@ -127,16 +119,17 @@ atc_post_response = reqAcc.requet('/en_FR/add-product?format=ajax',
 		'X-Requested-With': 'XMLHttpRequest',
 		'Origin': 'https://www.solebox.com',
 		'Connection':'close',
-		'Referer': 'https://www.solebox.com/en_FR/p/carhartt_wip-s%2Fs_pocket_tee_-black-01713398.html',#Lien du produit 
+		'Referer': 'https://www.solebox.com/en_FR/p/carhartt_wip-s%2Fs_pocket_tee_-black-01713398.html',#Lien du produit à modifier
 		'TE': 'Trailers'
 	},
     body="pid=0171339800000004&options=%5B%7B%22optionId%22%3A%225903%22%2C%22selectedValueId%22%3A%22L%22%7D%5D&quantity=1"#PID du produit récupéré dans la requête https
 )
 
-if("Error" in atc_post_response):
-    print("Produit ajouté au panier !");
+#Vérification de l'ajout au panier
+if("added to cart" in atc_post_response):
+    print("Votre article a été rajouté au panier !");
 else:
-    print("Impossible d'ajouter le produit au panier. Vérifiez le pid.")
+    print("Ajout de l'article échoué.")
 
 		
 	
