@@ -55,6 +55,7 @@ response_acc = reqAcc.requet('/en_FR/registration?rurl=1',
 
 
 
+    #csrf_token = BeautifulSoup(reqAcc.response,"html.parser").find('input',attrs={'name':'csr_token'})['value']
 csrf = re.search(r'(name=\"csrf_token\" value=\")(.+)(=\"/>)',response_acc).group(2) #Recherche du token csrf
 
 #Initialisation d'une variable contenant les informations de l'utilisateur
